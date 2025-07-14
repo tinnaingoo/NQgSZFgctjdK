@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsive Calculator with Volume Units</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #007B83;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+	h2 {
+      margin-top: 0;
+      color: #007B83;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    @media (min-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select, button {
+      width: auto;
+      padding: 8px;
+      font-size: 1rem;
+    }
+    button {
+      background: #007B83;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background: #005f62;
+    }
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input.error {
+      border: 2px solid red;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row > div {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Advanced Calculator My Packaging Design</h1>
+</header>
+
+<div class="grid">
+  <!-- Column 1: Value Calculator -->
+  <section>
+    <h2>Value Calculator</h2>
+    <label for="a">Value A:</label>
+    <input type="text" id="a" />
+    <label for="b">Value B (or Result):</label>
+    <input type="text" id="b" />
+    <div class="result" id="percentageResult"></div>
+    <div class="result" id="divideByResult"></div>
+
+    <h3>Reverse Calculation</h3>
+    <label for="percentOnly">Enter Percentage (%):</label>
+    <input type="text" id="percentOnly" />
+    <label for="divideOnly">Enter Divide By Value:</label>
+    <input type="text" id="divideOnly" />
+    <div class="result" id="bFromPercent"></div>
+    <div class="result" id="bFromDivide"></div>
+  </section>
+
+  <!-- Column 2: Unit Converter + Basic Calculator -->
+  <section>
+    <h2>Unit Converter</h2>
+    <label for="unitValue">Enter Value:</label>
+    <input type="text" id="unitValue" />
+    <label for="fromUnit">From Unit:</label>
+    <select id="fromUnit">
+      <option value="inch">Inches</option>
+      <option value="cm">Centimeters</option>
+      <option value="mm">Millimeters</option>
+      <option value="ml">Milliliters</option>
+      <option value="oz">Ounces</option>
+    </select>
+    <label for="toUnit">To Unit:</label>
+    <select id="toUnit">
+      <option value="inch">Inches</option>
+      <option value="cm">Centimeters</option>
+      <option value="mm">Millimeters</option>
+      <option value="ml">Milliliters</option>
+      <option value="oz">Ounces</option>
+    </select>
+    <div class="result" id="unitResult"></div>
+
+    <h2>Basic Calculator</h2>
+    <input type="text" id="basicCalcInput" placeholder="Enter expression, e.g. 12+5*3" />
+    <div class="result" id="basicCalcResult"></div>
+
+  </section>
+
+  <!-- Column 3: Volume Calculator -->
+  <section>
+    <h2>Volume Calculator</h2>
+    <div>
+      <label><input type="radio" name="shape" value="truncated" checked /> Truncated Pyramid</label>
+      <label><input type="radio" name="shape" value="conical" /> Conical Frustum</label>
+    </div>
+
+    <div id="truncatedInputs">
+      <div class="row">
+        <div>
+          <label>Top Length:</label>
+          <input type="text" id="topLength">
+        </div>
+        <div>
+          <label>Unit:</label>
+          <select id="topLengthUnit">
+            <option value="cm">cm</option>
+            <option value="inch">inch</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Top Width:</label>
+          <input type="text" id="topWidth">
+        </div>
+        <div>
+          <label>Unit:</label>
+          <select id="topWidthUnit">
+            <option value="cm">cm</option>
+            <option value="inch">inch</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Bottom Length:</label>
+          <input type="text" id="bottomLength">
+        </div>
+        <div>
+          <label>Unit:</label>
+          <select id="bottomLengthUnit">
+            <option value="cm">cm</option>
+            <option value="inch">inch</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Bottom Width:</label>
+          <input type="text" id="bottomWidth">
+        </div>
+        <div>
+          <label>Unit:</label>
+          <select id="bottomWidthUnit">
+            <option value="cm">cm</option>
+            <option value="inch">inch</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Height:</label>
+          <input type="text" id="heightTrunc">
+        </div>
+        <div>
+          <label>Unit:</label>
+          <select id="heightTruncUnit">
+            <option value="cm">cm</option>
+            <option value="inch">inch</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="conicalInputs" style="display: none;">
+      <div class="row">
+        <div>
+          <label>Top Diameter:</label>
+          <input type="text" id="topDiameter">
+        </div>
+        <div>
+          <label>Unit:</label>
+          <select id="topDiameterUnit">
+            <option value="cm">cm</option>
+            <option value="inch">inch</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Bottom Diameter:</label>
+          <input type="text" id="bottomDiameter">
+        </div>
+        <div>
+          <label>Unit:</label>
+          <select id="bottomDiameterUnit">
+            <option value="cm">cm</option>
+            <option value="inch">inch</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Height:</label>
+          <input type="text" id="heightConical">
+        </div>
+        <div>
+          <label>Unit:</label>
+          <select id="heightConicalUnit">
+            <option value="cm">cm</option>
+            <option value="inch">inch</option>
+            <option value="mm">mm</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <label>Output Unit:</label>
+    <select id="volumeUnit">
+      <option value="ml">Milliliters (ml)</option>
+      <option value="oz">Ounces (oz)</option>
+    </select>
+
+    <button onclick="calculateVolume()">Calculate Volume</button>
+    <div class="result" id="volumeResult"></div>
+  </section>
+</div>
+
+<footer style="background:#007B83; color:#fff; text-align:center; padding:15px;">
+  © 2025 TC-Myaing | Design by Tin Naing Oo.
+</footer>
+
+<script src="/Tools/pkdc/scripts.js"></script>
+
+</body>
+</html>
