@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volume Calculator | Designer's Toolkit</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+  <style>
+    /* Additional Styles for Volume Calculator */
+    .shape-selector {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .shape-option {
+      flex: 1;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+    .shape-option:hover {
+      background: #e9ecef;
+    }
+    .shape-option.active {
+      background: #007B83;
+      color: white;
+    }
+    .shape-inputs {
+      display: none;
+    }
+    .shape-inputs.active {
+      display: block;
+    }
+    .dimension-input {
+      margin-bottom: 15px;
+    }
+    .dimension-row {
+      display: flex;
+      gap: 15px;
+    }
+    .dimension-row > div {
+      flex: 1;
+    }
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f0f8ff;
+      border-radius: 8px;
+      border-left: 4px solid #007B83;
+      font-size: 1.1rem;
+    }
+    .formula-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+    }
+    .shape-diagram {
+      width: 200px;
+      max-width: 300px;
+      margin: 20px auto;
+      display: block;
+      border-radius: 8px;
+    }
+    .dimension-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Volume Calculator</h1>
+    <p>Calculate volumes for packaging designs</p>
+  </header>
+
+  <div class="tool-container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+
+    <div class="shape-selector">
+      <div class="shape-option active" data-shape="truncated">Truncated Pyramid</div>
+      <div class="shape-option" data-shape="conical">Conical Frustum</div>
+    </div>
+
+    <!-- Truncated Pyramid Section -->
+    <div id="truncated-inputs" class="shape-inputs active">
+      <img src="../assets/truncated.png" alt="Truncated Pyramid Diagram" class="shape-diagram">
+      <p class="dimension-label">(အပေါ်ခြေနှင့်အောက်ခြေစတုဂံတို့ကြားရှိ ထုထည်)</p>
+      
+      <div class="dimension-row">
+        <div class="dimension-input">
+          <label for="top-length">Top Length (L₁):</label>
+          <input type="number" id="top-length" placeholder="Enter length" step="any">
+        </div>
+        <div class="dimension-input">
+          <label for="top-width">Top Width (W₁):</label>
+          <input type="number" id="top-width" placeholder="Enter width" step="any">
+        </div>
+      </div>
+      
+      <div class="dimension-row">
+        <div class="dimension-input">
+          <label for="bottom-length">Bottom Length (L₂):</label>
+          <input type="number" id="bottom-length" placeholder="Enter length" step="any">
+        </div>
+        <div class="dimension-input">
+          <label for="bottom-width">Bottom Width (W₂):</label>
+          <input type="number" id="bottom-width" placeholder="Enter width" step="any">
+        </div>
+      </div>
+      
+      <div class="dimension-row">
+        <div class="dimension-input">
+          <label for="height-trunc">Height (h):</label>
+          <input type="number" id="height-trunc" placeholder="Enter height" step="any">
+        </div>
+        <div class="dimension-input">
+          <label for="unit-trunc">Unit:</label>
+          <select id="unit-trunc">
+            <option value="mm">Millimeters (mm)</option>
+            <option value="cm" selected>Centimeters (cm)</option>
+            <option value="inch">Inches (in)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conical Frustum Section -->
+    <div id="conical-inputs" class="shape-inputs">
+      <img src="../assets/conical.png" alt="Conical Frustum Diagram" class="shape-diagram">
+      <p class="dimension-label">(အပေါ်ခြေနှင့်အောက်ခြေစက်ဝိုင်းတို့ကြားရှိ ထုထည်)</p>
+      
+      <div class="dimension-row">
+        <div class="dimension-input">
+          <label for="top-diameter">Top Diameter (D₁):</label>
+          <input type="number" id="top-diameter" placeholder="Enter diameter" step="any">
+        </div>
+        <div class="dimension-input">
+          <label for="bottom-diameter">Bottom Diameter (D₂):</label>
+          <input type="number" id="bottom-diameter" placeholder="Enter diameter" step="any">
+        </div>
+      </div>
+      
+      <div class="dimension-row">
+        <div class="dimension-input">
+          <label for="height-conical">Height (h):</label>
+          <input type="number" id="height-conical" placeholder="Enter height" step="any">
+        </div>
+        <div class="dimension-input">
+          <label for="unit-conical">Unit:</label>
+          <select id="unit-conical">
+            <option value="mm">Millimeters (mm)</option>
+            <option value="cm" selected>Centimeters (cm)</option>
+            <option value="inch">Inches (in)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="dimension-input">
+      <label for="output-unit">Output Volume Unit:</label>
+      <select id="output-unit">
+        <option value="ml">Milliliters (ml)</option>
+        <option value="oz">Fluid Ounces (oz)</option>
+      </select>
+    </div>
+
+    <button onclick="calculateVolume()">Calculate Volume</button>
+
+    <div class="result-box" id="volume-result"></div>
+
+    <div class="formula-box">
+      <strong>Volume Formulas:</strong><br>
+      <code id="truncated-formula">Truncated Pyramid: V = (h/3) × (L₁W₁ + L₂W₂ + √(L₁W₁×L₂W₂))</code><br>
+      <code id="conical-formula" style="display:none">Conical Frustum: V = (πh/3) × (r₁² + r₁r₂ + r₂²)</code>
+    </div>
+  </div>
+
+  <footer>
+	© 2025 TC-Myaing | Design by Tin Naing Oo.
+  </footer>
+
+  <script>
+    // Shape selection
+    document.querySelectorAll('.shape-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.shape-option').forEach(opt => {
+          opt.classList.remove('active');
+        });
+        option.classList.add('active');
+        
+        document.querySelectorAll('.shape-inputs').forEach(inputs => {
+          inputs.classList.remove('active');
+        });
+        
+        document.getElementById(`${option.dataset.shape}-inputs`).classList.add('active');
+        
+        // Update formula display
+        if(option.dataset.shape === 'truncated') {
+          document.getElementById('truncated-formula').style.display = 'block';
+          document.getElementById('conical-formula').style.display = 'none';
+        } else {
+          document.getElementById('truncated-formula').style.display = 'none';
+          document.getElementById('conical-formula').style.display = 'block';
+        }
+      });
+    });
+
+    // Auto-calculate when inputs change
+    function setupAutoCalculate() {
+      // Truncated pyramid inputs
+      const truncInputs = [
+        'top-length', 'top-width', 'bottom-length', 'bottom-width', 'height-trunc', 'unit-trunc'
+      ];
+      
+      // Conical frustum inputs
+      const conicalInputs = [
+        'top-diameter', 'bottom-diameter', 'height-conical', 'unit-conical'
+      ];
+      
+      // Output unit
+      const outputUnit = document.getElementById('output-unit');
+      
+      // Add event listeners
+      truncInputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', calculateVolume);
+      });
+      
+      conicalInputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', calculateVolume);
+      });
+      
+      outputUnit.addEventListener('change', calculateVolume);
+    }
+
+    // Convert all dimensions to cm first
+    function convertToCm(value, unit) {
+      switch(unit) {
+        case 'mm': return value / 10;
+        case 'inch': return value * 2.54;
+        default: return value; // cm
+      }
+    }
+
+    // Main calculation function
+    function calculateVolume() {
+      const activeShape = document.querySelector('.shape-option.active').dataset.shape;
+      const outputUnit = document.getElementById('output-unit').value;
+      let volumeCm3 = 0;
+      
+      try {
+        if(activeShape === 'truncated') {
+          // Get truncated pyramid dimensions
+          const l1 = parseFloat(document.getElementById('top-length').value);
+          const w1 = parseFloat(document.getElementById('top-width').value);
+          const l2 = parseFloat(document.getElementById('bottom-length').value);
+          const w2 = parseFloat(document.getElementById('bottom-width').value);
+          const h = parseFloat(document.getElementById('height-trunc').value);
+          const unit = document.getElementById('unit-trunc').value;
+          
+          // Convert to cm
+          const l1_cm = convertToCm(l1, unit);
+          const w1_cm = convertToCm(w1, unit);
+          const l2_cm = convertToCm(l2, unit);
+          const w2_cm = convertToCm(w2, unit);
+          const h_cm = convertToCm(h, unit);
+          
+          // Calculate areas
+          const A1 = l1_cm * w1_cm; // Top area
+          const A2 = l2_cm * w2_cm; // Bottom area
+          
+          // Calculate volume (cm³)
+          volumeCm3 = (h_cm / 3) * (A1 + A2 + Math.sqrt(A1 * A2));
+        } 
+        else { // Conical frustum
+          // Get conical frustum dimensions
+          const d1 = parseFloat(document.getElementById('top-diameter').value);
+          const d2 = parseFloat(document.getElementById('bottom-diameter').value);
+          const h = parseFloat(document.getElementById('height-conical').value);
+          const unit = document.getElementById('unit-conical').value;
+          
+          // Convert to cm
+          const r1 = convertToCm(d1, unit) / 2; // Top radius
+          const r2 = convertToCm(d2, unit) / 2; // Bottom radius
+          const h_cm = convertToCm(h, unit);
+          
+          // Calculate volume (cm³)
+          volumeCm3 = (Math.PI * h_cm / 3) * (r1*r1 + r1*r2 + r2*r2);
+        }
+        
+        // Convert to output unit (1 cm³ = 1 ml)
+        let result;
+        if(outputUnit === 'oz') {
+          result = volumeCm3 / 29.5735; // Convert ml to oz
+          document.getElementById('volume-result').innerHTML = 
+            `Volume: <strong>${result.toFixed(2)} fluid ounces (${volumeCm3.toFixed(2)} ml)</strong>`;
+        } else {
+          result = volumeCm3;
+          document.getElementById('volume-result').innerHTML = 
+            `Volume: <strong>${result.toFixed(2)} milliliters</strong>`;
+        }
+      } catch(e) {
+        document.getElementById('volume-result').innerHTML = 
+          'Please enter valid dimensions for all fields';
+      }
+    }
+
+    // Initialize auto-calculation
+    setupAutoCalculate();
+  </script>
+</body>
+</html>

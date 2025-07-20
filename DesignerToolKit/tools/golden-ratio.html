@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Golden Ratio Calculator | Designer's Toolkit</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    header {
+      background: #007B83;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    
+    .tool-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 8px 16px;
+      background: #007B83;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+    
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    
+    .input-group {
+      display: flex;
+      gap: 15px;
+      margin: 10px 0;
+    }
+    
+    .input-group > div {
+      flex: 1;
+    }
+    
+    .result {
+      margin: 15px 0;
+      padding: 15px;
+      background: #f0f8ff;
+      border-radius: 8px;
+      border-left: 4px solid #007B83;
+    }
+    
+    .breakdown {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 8px;
+    }
+    
+    button {
+      background: #007B83;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    
+    .formula-box {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 15px;
+      color: #666;
+    }
+    
+    .error-message {
+      color: red;
+      font-weight: bold;
+    }
+
+
+	checkbox-container {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+      margin-right: 10px;
+    }
+    
+    .ratio-input-container {
+      margin-top: 10px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+
+   .checkbox-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Golden Ratio Calculator</h1>
+    <p>Calculate using the Golden Proportion (φ ≈ 1.618)</p>
+  </header>
+
+  <div class="tool-container">
+    <a href="index.html" class="back-btn">← Back to Home</a>
+
+
+<!-- Section 1: Basic Golden Size -->
+    <h2>Golden Size from Ratio</h2>
+    <label for="sizeInput">Enter Base Size (A):</label>
+    <input type="number" id="sizeInput" placeholder="e.g., 5" oninput="calculateGoldenSize()">
+    
+    <label for="ratioInput">Custom Ratio (default 1.618):</label>
+    <input type="number" id="ratioInput" placeholder="1.618" value="1.618" step="0.001" oninput="calculateGoldenSize()">
+    
+    <div class="result" id="goldenSizeResult"></div>
+
+
+
+    <!-- Section 2: Custom Golden Ratio Division -->
+    <h2>Custom Golden Ratio Division</h2>
+    <label for="customSize">Enter Base Size (A):</label>
+    <input type="number" id="customSize" placeholder="e.g., 20" oninput="calculateCustomGolden()">
+    
+    <div class="input-group">
+      <div>
+        <label for="customDivisorB">Divide by (B):</label>
+        <input type="number" id="customDivisorB" placeholder="e.g., 10" oninput="calculateCustomGolden()">
+      </div>
+      <div>
+        <label for="customMultiplierC">Multiply by (C):</label>
+        <input type="number" id="customMultiplierC" placeholder="e.g., 1" required oninput="calculateCustomGolden()">
+      </div>
+    </div>
+    
+    <div class="result" id="customGoldenResult"></div>
+
+
+
+    <!-- Section 3: Golden Ratio Comparison -->
+<h2>Golden Ratio Comparison</h2>
+<label for="grA">Value A:</label>
+<input type="number" id="grA" placeholder="e.g., 10" oninput="calculateGoldenRatio()">
+
+<label for="grB">Value B:</label>
+<input type="number" id="grB" placeholder="e.g., 16.18" oninput="calculateGoldenRatio()">
+
+<div class="result" id="goldenCompareResult"></div>
+<button id="copyBtn" style="display:none;" onclick="copySuggestedB()">📋 Copy Suggested B</button>
+
+
+    <!-- Formula Reference -->
+    <h3>Golden Ratio Formulas</h3>
+    <div class="formula-box">
+      <strong>Golden Ratio (φ):</strong><br>
+      <code>φ = (1 + √5) / 2 ≈ 1.61803398875</code>
+    </div>
+    <div class="formula-box">
+      <strong>Basic Calculation:</strong><br>
+      <code>B = A × φ</code><br>
+      <code>A = B ÷ φ</code>
+    </div>
+    <div class="formula-box">
+      <strong>Division Calculation:</strong><br>
+      <code>Part Size = (A ÷ C) ÷ φ</code>
+    </div>
+  </div>
+
+  <footer>
+    © 2024 Designer's Toolkit | Made with ❤️ for designers
+  </footer>
+
+  <script>
+    // Define the golden ratio constant first
+    const goldenRatio = (1 + Math.sqrt(5)) / 2; // φ ≈ 1.61803398875
+    let lastSuggestedB = '';
+
+// Section 1: Basic Golden Size Calculation
+    function calculateGoldenSize() {
+      const size = parseFloat(document.getElementById("sizeInput").value);
+      const ratio = parseFloat(document.getElementById("ratioInput").value) || goldenRatio;
+      const output = document.getElementById("goldenSizeResult");
+
+      if (!isNaN(size)) {
+        const result = size * ratio;
+        output.innerHTML = `Golden Size (B) = <strong>${result.toFixed(4)}</strong><br>
+                           <div class="breakdown">Calculation: ${size} × ${ratio.toFixed(4)}</div>`;
+      } else {
+        output.innerHTML = "";
+      }
+    }
+    
+
+
+    // Section 2: Custom Golden Ratio Division
+    // Section 2: Custom Golden Ratio Division - FINAL FIXED VERSION
+    function calculateCustomGolden() {
+      const size = parseFloat(document.getElementById("customSize").value);
+      const divisorB = parseFloat(document.getElementById("customDivisorB").value);
+      const multiplierC = parseFloat(document.getElementById("customMultiplierC").value);
+      const resultBox = document.getElementById("customGoldenResult");
+
+      // Clear result if no valid input
+      if (isNaN(size) || isNaN(divisorB) || isNaN(multiplierC)) {
+        resultBox.innerHTML = '<span class="error-message">⚠️ Please enter values for A, B and C</span>';
+        return;
+      }
+
+      if (divisorB === 0) {
+        resultBox.innerHTML = '<span class="error-message">❌ Cannot divide by zero</span>';
+        return;
+      }
+
+      // EXACT CALCULATION AS REQUESTED:
+      // 1. Divide A by B
+      // 2. Divide result by golden ratio (φ)
+      // 3. Multiply by C
+      const step1 = size / divisorB;
+      const step2 = step1 / goldenRatio;
+      const finalResult = step2 * multiplierC;
+
+      resultBox.innerHTML = `
+        Result = <strong>${finalResult.toFixed(4)}</strong><br>
+        <div class="breakdown">
+          Calculation steps:<br>
+          1. ${size} ÷ ${divisorB} = ${step1.toFixed(4)}<br>
+          2. ${step1.toFixed(4)} ÷ φ (${goldenRatio.toFixed(4)}) = ${step2.toFixed(4)}<br>
+          3. ${step2.toFixed(4)} × ${multiplierC} = <strong>${finalResult.toFixed(4)}</strong>
+        </div>
+      `;
+    }
+
+    // Section 3: Golden Ratio Comparison
+function calculateGoldenRatio() {
+  const aInput = document.getElementById("grA");
+  const bInput = document.getElementById("grB");
+  const output = document.getElementById("goldenCompareResult");
+  const copyBtn = document.getElementById("copyBtn");
+
+  const a = parseFloat(aInput.value);
+  const b = parseFloat(bInput.value);
+
+  if (!isNaN(a) && !isNaN(b) && a !== 0) {
+    const ratio = b / a;
+    let operation, operationValue;
+    
+    if (b > a) {
+      operation = "×";
+      operationValue = ratio.toFixed(4);
+    } else {
+      operation = "÷";
+      operationValue = (a / b).toFixed(4);
+    }
+    
+    const diff = Math.abs(ratio - goldenRatio);
+    const tolerance = 0.01;
+    
+    let resultHTML = `To get B (${b}) from A (${a}), you need to ${operation} <strong>${operationValue}</strong><br>`;
+    
+    if (Math.abs(ratio - goldenRatio) < 0.0001) {
+      resultHTML += `<span style="color:green;">✔ Perfect Golden Ratio match (φ ≈ 1.618)</span>`;
+      copyBtn.style.display = 'none';
+    } else {
+      const suggestedB = (a * goldenRatio).toFixed(4);
+      lastSuggestedB = suggestedB;
+      
+      resultHTML += `
+        <span style="color:red;">❌ Not a Golden Ratio (φ ≈ 1.618)</span><br>
+        <div class="breakdown">
+          Calculation breakdown:<br>
+          - Your ratio: ${ratio.toFixed(4)}<br>
+          - Golden ratio: ${goldenRatio.toFixed(4)}<br>
+          - Difference: ${diff.toFixed(4)}<br>
+          - Suggested B for perfect ratio: <strong>${suggestedB}</strong>
+        </div>
+      `;
+      copyBtn.style.display = 'inline-block';
+    }
+    
+    output.innerHTML = resultHTML;
+  } else {
+    output.innerHTML = '<span class="error-message">⚠️ Please enter valid values for A and B (A cannot be zero)</span>';
+    copyBtn.style.display = 'none';
+  }
+}
+    function copySuggestedB() {
+      if (lastSuggestedB) {
+        navigator.clipboard.writeText(lastSuggestedB).then(() => {
+          alert(`Copied: ${lastSuggestedB}`);
+        });
+      }
+    }
+
+    // Initialize calculations on page load
+    window.onload = function() {
+      calculateGoldenSize();
+      calculateCustomGolden();
+      calculateGoldenRatio();
+    };
+  </script>
+</body>
+</html>
