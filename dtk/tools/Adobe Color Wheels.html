@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Color Wheel Tool</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+        }
+        
+        .color-wheel-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+        
+        #color-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .theory-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            background: rgba(255,255,255,0.8);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            pointer-events: none;
+        }
+        
+        .color-picker {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 300px;
+        }
+        
+        .color-scheme-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .color-scheme-selector button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .color-scheme-selector button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .color-scheme-selector button:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .color-palette {
+            display: flex;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .color-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 10px;
+            color: white;
+            text-shadow: 0 0 3px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        
+        .color-box:hover {
+            transform: scaleY(1.1);
+        }
+        
+        .color-box .hex-value {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .color-box .color-index {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .color-values {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .color-value {
+            display: flex;
+            align-items: center;
+        }
+        
+        .color-value label {
+            width: 80px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .color-value input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            margin-left: 10px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-preview::after {
+            content: 'Copy';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            text-align: center;
+            font-size: 10px;
+            padding: 2px 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .color-preview:hover::after {
+            opacity: 1;
+        }
+        
+        .color-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            pointer-events: none;
+            transform: translate(-10px, -10px);
+            z-index: 10;
+        }
+        
+        .theory-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: left center;
+            height: 2px;
+            background: rgba(0,0,0,0.3);
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Professional Color Wheel Tool</h1>
+    
+    <div class="container">
+        <div class="color-wheel-container">
+            <canvas id="color-wheel" width="400" height="400"></canvas>
+            <div class="theory-indicator" id="theory-indicator">Analogous</div>
+            <div class="color-marker" id="color-marker"></div>
+            <!-- Theory lines will be added dynamically -->
+        </div>
+        
+        <div class="color-picker">
+            <div class="color-scheme-selector">
+                <button class="active" data-scheme="analogous">Analogous</button>
+                <button data-scheme="monochromatic">Monochromatic</button>
+                <button data-scheme="triad">Triad</button>
+                <button data-scheme="complementary">Complementary</button>
+                <button data-scheme="split-complementary">Split Complementary</button>
+                <button data-scheme="square">Square</button>
+                <button data-scheme="compound">Compound</button>
+            </div>
+            
+            <div class="color-palette" id="color-palette">
+                <div class="color-box" data-color="1">
+                    <div class="color-index">1</div>
+                    <span class="hex-value">#FF0000</span>
+                </div>
+                <div class="color-box" data-color="2">
+                    <div class="color-index">2</div>
+                    <span class="hex-value">#00FF00</span>
+                </div>
+                <div class="color-box" data-color="3">
+                    <div class="color-index">3</div>
+                    <span class="hex-value">#0000FF</span>
+                </div>
+                <div class="color-box" data-color="4">
+                    <div class="color-index">4</div>
+                    <span class="hex-value">#FFFF00</span>
+                </div>
+                <div class="color-box" data-color="5">
+                    <div class="color-index">5</div>
+                    <span class="hex-value">#FF00FF</span>
+                </div>
+            </div>
+            
+            <div class="color-values">
+                <div class="color-value">
+                    <label>HEX:</label>
+                    <input type="text" id="hex-value" value="#FF0000">
+                    <div class="color-preview" id="color-preview"></div>
+                </div>
+                <div class="color-value">
+                    <label>RGB:</label>
+                    <input type="text" id="rgb-value" value="rgb(255, 0, 0)">
+                </div>
+                <div class="color-value">
+                    <label>HSL:</label>
+                    <input type="text" id="hsl-value" value="hsl(0, 100%, 50%)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>How to use:</h3>
+        <ul>
+            <li>Click on the color wheel to select a base color</li>
+            <li>Choose a color harmony rule from the buttons</li>
+            <li>Edit HEX, RGB, or HSL values directly to change the base color</li>
+            <li>Click on any color in the palette to make it the base color</li>
+            <li>Click the preview box to copy the current color</li>
+            <li>Color theory indicators show on the wheel for visual reference</li>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('color-wheel');
+            const ctx = canvas.getContext('2d');
+            const colorMarker = document.getElementById('color-marker');
+            const colorPalette = document.getElementById('color-palette');
+            const hexInput = document.getElementById('hex-value');
+            const rgbInput = document.getElementById('rgb-value');
+            const hslInput = document.getElementById('hsl-value');
+            const colorPreview = document.getElementById('color-preview');
+            const schemeButtons = document.querySelectorAll('.color-scheme-selector button');
+            const theoryIndicator = document.getElementById('theory-indicator');
+            const wheelContainer = document.querySelector('.color-wheel-container');
+            
+            let selectedScheme = 'analogous';
+            let baseHue = 0;
+            let baseSaturation = 1;
+            let baseLightness = 0.5;
+            let baseColor = { r: 255, g: 0, b: 0 };
+            let theoryLines = [];
+            
+            // Draw color wheel
+            function drawColorWheel() {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = Math.min(centerX, centerY) - 10;
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw color wheel
+                for (let angle = 0; angle < 360; angle += 1) {
+                    const startAngle = (angle - 2) * Math.PI / 180;
+                    const endAngle = angle * Math.PI / 180;
+                    
+                    for (let r = 0; r < radius; r += 1) {
+                        const saturation = r / radius;
+                        const value = 1.0;
+                        
+                        const hue = angle;
+                        const [red, green, blue] = hsvToRgb(hue, saturation, value);
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(centerX, centerY);
+                        ctx.arc(centerX, centerY, r, startAngle, endAngle);
+                        ctx.closePath();
+                        
+                        ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+                        ctx.fill();
+                    }
+                }
+            }
+            
+            // HSV to RGB conversion
+            function hsvToRgb(h, s, v) {
+                h /= 60;
+                const i = Math.floor(h);
+                const f = h - i;
+                const p = v * (1 - s);
+                const q = v * (1 - s * f);
+                const t = v * (1 - s * (1 - f));
+                
+                let r, g, b;
+                switch (i % 6) {
+                    case 0: r = v; g = t; b = p; break;
+                    case 1: r = q; g = v; b = p; break;
+                    case 2: r = p; g = v; b = t; break;
+                    case 3: r = p; g = q; b = v; break;
+                    case 4: r = t; g = p; b = v; break;
+                    case 5: r = v; g = p; b = q; break;
+                }
+                
+                return [
+                    Math.round(r * 255),
+                    Math.round(g * 255),
+                    Math.round(b * 255)
+                ];
+            }
+            
+            // RGB to HEX conversion
+            function rgbToHex(r, g, b) {
+                return '#' + [r, g, b].map(x => {
+                    const hex = x.toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                }).join('');
+            }
+            
+            // RGB to HSL conversion
+            function rgbToHsl(r, g, b) {
+                r /= 255, g /= 255, b /= 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
+                
+                if (max === min) {
+                    h = s = 0;
+                } else {
+                    const d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+                
+                return [
+                    Math.round(h * 360),
+                    Math.round(s * 100),
+                    Math.round(l * 100)
+                ];
+            }
+            
+            // HSL to RGB conversion
+            function hslToRgb(h, s, l) {
+                h /= 360;
+                s /= 100;
+                l /= 100;
+                
+                let r, g, b;
+                
+                if (s === 0) {
+                    r = g = b = l;
+                } else {
+                    const hue2rgb = (p, q, t) => {
+                        if (t < 0) t += 1;
+                        if (t > 1) t -= 1;
+                        if (t < 1/6) return p + (q - p) * 6 * t;
+                        if (t < 1/2) return q;
+                        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                        return p;
+                    };
+                    
+                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                    const p = 2 * l - q;
+                    
+                    r = hue2rgb(p, q, h + 1/3);
+                    g = hue2rgb(p, q, h);
+                    b = hue2rgb(p, q, h - 1/3);
+                }
+                
+                return [
+                    Math.round(r * 255),
+                    Math.round(g * 255),
+                    Math.round(b * 255)
+                ];
+            }
+            
+            // HEX to RGB conversion
+            function hexToRgb(hex) {
+                hex = hex.replace(/^#/, '');
+                
+                if (hex.length === 3) {
+                    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+                }
+                
+                const num = parseInt(hex, 16);
+                return {
+                    r: (num >> 16) & 255,
+                    g: (num >> 8) & 255,
+                    b: num & 255
+                };
+            }
+            
+            // Parse RGB string
+            function parseRgb(rgbStr) {
+                const match = rgbStr.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i);
+                if (!match) return null;
+                
+                return {
+                    r: parseInt(match[1], 10),
+                    g: parseInt(match[2], 10),
+                    b: parseInt(match[3], 10)
+                };
+            }
+            
+            // Parse HSL string
+            function parseHsl(hslStr) {
+                const match = hslStr.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/i);
+                if (!match) return null;
+                
+                return {
+                    h: parseInt(match[1], 10),
+                    s: parseInt(match[2], 10),
+                    l: parseInt(match[3], 10)
+                };
+            }
+            
+            // Get color from wheel position
+            function getColorFromWheel(x, y) {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const dx = x - centerX;
+                const dy = y - centerY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const radius = Math.min(centerX, centerY) - 10;
+                
+                if (distance > radius) return null;
+                
+                let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                if (angle < 0) angle += 360;
+                
+                const saturation = distance / radius;
+                const value = 1.0;
+                
+                return {
+                    hsv: { h: angle, s: saturation, v: value },
+                    rgb: hsvToRgb(angle, saturation, value)
+                };
+            }
+            
+            // Update base color from RGB values
+            function updateBaseColor(r, g, b) {
+                baseColor = { r, g, b };
+                const hsl = rgbToHsl(r, g, b);
+                baseHue = hsl[0];
+                baseSaturation = hsl[1] / 100;
+                baseLightness = hsl[2] / 100;
+                
+                updateMarkerPosition();
+                updateColorValues(r, g, b);
+                updateColorScheme();
+                drawTheoryLines();
+            }
+            
+            // Update marker position based on current color
+            function updateMarkerPosition() {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = Math.min(centerX, centerY) - 10;
+                
+                const angle = baseHue * Math.PI / 180;
+                const distance = baseSaturation * radius;
+                const markerX = centerX + Math.cos(angle) * distance;
+                const markerY = centerY + Math.sin(angle) * distance;
+                
+                colorMarker.style.left = `${markerX}px`;
+                colorMarker.style.top = `${markerY}px`;
+                colorMarker.style.backgroundColor = `rgb(${baseColor.r}, ${baseColor.g}, ${baseColor.b})`;
+            }
+            
+            // Draw theory lines on the color wheel
+            function drawTheoryLines() {
+                // Remove existing lines
+                theoryLines.forEach(line => line.remove());
+                theoryLines = [];
+                
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = Math.min(centerX, centerY) - 10;
+                
+                // Get angles for current scheme
+                const angles = getAnglesForScheme(selectedScheme, baseHue);
+                
+                angles.forEach(angle => {
+                    const line = document.createElement('div');
+                    line.className = 'theory-line';
+                    
+                    const angleRad = angle * Math.PI / 180;
+                    const endX = centerX + Math.cos(angleRad) * radius;
+                    const endY = centerY + Math.sin(angleRad) * radius;
+                    
+                    const length = Math.sqrt(Math.pow(endX - centerX, 2) + Math.pow(endY - centerY, 2));
+                    const transformAngle = Math.atan2(endY - centerY, endX - centerX) * 180 / Math.PI;
+                    
+                    line.style.width = `${length}px`;
+                    line.style.left = `${centerX}px`;
+                    line.style.top = `${centerY}px`;
+                    line.style.transform = `rotate(${transformAngle}deg)`;
+                    
+                    wheelContainer.appendChild(line);
+                    theoryLines.push(line);
+                });
+            }
+            
+            // Get angles for current color scheme
+            function getAnglesForScheme(scheme, baseAngle) {
+                switch (scheme) {
+                    case 'analogous':
+                        return [
+                            baseAngle,
+                            (baseAngle + 30) % 360,
+                            (baseAngle - 30 + 360) % 360
+                        ];
+                        
+                    case 'monochromatic':
+                        return [baseAngle];
+                        
+                    case 'triad':
+                        return [
+                            baseAngle,
+                            (baseAngle + 120) % 360,
+                            (baseAngle + 240) % 360
+                        ];
+                        
+                    case 'complementary':
+                        return [
+                            baseAngle,
+                            (baseAngle + 180) % 360
+                        ];
+                        
+                    case 'split-complementary':
+                        return [
+                            baseAngle,
+                            (baseAngle + 150) % 360,
+                            (baseAngle + 210) % 360
+                        ];
+                        
+                    case 'square':
+                        return [
+                            baseAngle,
+                            (baseAngle + 90) % 360,
+                            (baseAngle + 180) % 360,
+                            (baseAngle + 270) % 360
+                        ];
+                        
+                    case 'compound':
+                        return [
+                            baseAngle,
+                            (baseAngle + 30) % 360,
+                            (baseAngle + 180) % 360,
+                            (baseAngle + 210) % 360
+                        ];
+                        
+                    default:
+                        return [baseAngle];
+                }
+            }
+            
+            // Update color scheme
+            function updateColorScheme() {
+                const colors = [];
+                theoryIndicator.textContent = selectedScheme.charAt(0).toUpperCase() + selectedScheme.slice(1);
+                
+                switch (selectedScheme) {
+                    case 'analogous':
+                        colors.push(baseHue);
+                        colors.push((baseHue + 30) % 360);
+                        colors.push((baseHue - 30 + 360) % 360);
+                        colors.push((baseHue + 15) % 360);
+                        colors.push((baseHue - 15 + 360) % 360);
+                        break;
+                        
+                    case 'monochromatic':
+                        // Different lightness levels
+                        colors.push(baseHue);
+                        colors.push(baseHue);
+                        colors.push(baseHue);
+                        colors.push(baseHue);
+                        colors.push(baseHue);
+                        break;
+                        
+                    case 'triad':
+                        colors.push(baseHue);
+                        colors.push((baseHue + 120) % 360);
+                        colors.push((baseHue + 240) % 360);
+                        colors.push((baseHue + 60) % 360);
+                        colors.push((baseHue + 180) % 360);
+                        break;
+                        
+                    case 'complementary':
+                        colors.push(baseHue);
+                        colors.push((baseHue + 180) % 360);
+                        colors.push((baseHue + 90) % 360);
+                        colors.push((baseHue + 270) % 360);
+                        colors.push((baseHue + 45) % 360);
+                        break;
+                        
+                    case 'split-complementary':
+                        colors.push(baseHue);
+                        colors.push((baseHue + 150) % 360);
+                        colors.push((baseHue + 210) % 360);
+                        colors.push((baseHue + 30) % 360);
+                        colors.push((baseHue + 330) % 360);
+                        break;
+                        
+                    case 'square':
+                        colors.push(baseHue);
+                        colors.push((baseHue + 90) % 360);
+                        colors.push((baseHue + 180) % 360);
+                        colors.push((baseHue + 270) % 360);
+                        colors.push((baseHue + 45) % 360);
+                        break;
+                        
+                    case 'compound':
+                        colors.push(baseHue);
+                        colors.push((baseHue + 30) % 360);
+                        colors.push((baseHue + 180) % 360);
+                        colors.push((baseHue + 210) % 360);
+                        colors.push((baseHue + 60) % 360);
+                        break;
+                }
+                
+                const colorBoxes = colorPalette.querySelectorAll('.color-box');
+                colorBoxes.forEach((box, index) => {
+                    if (index < colors.length) {
+                        let r, g, b;
+                        
+                        if (selectedScheme === 'monochromatic') {
+                            // For monochromatic, vary lightness
+                            const lightness = 0.2 + (index * 0.15);
+                            [r, g, b] = hslToRgb(baseHue, baseSaturation * 100, lightness * 100);
+                        } else {
+                            // For other schemes, use full saturation
+                            [r, g, b] = hsvToRgb(colors[index], 1, 1);
+                        }
+                        
+                        const hex = rgbToHex(r, g, b);
+                        box.style.backgroundColor = hex;
+                        box.querySelector('.hex-value').textContent = hex;
+                        
+                        // Update text color for better contrast
+                        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                        box.style.color = luminance > 0.5 ? 'black' : 'white';
+                        box.style.textShadow = luminance > 0.5 ? '0 0 3px rgba(255,255,255,0.8)' : '0 0 3px rgba(0,0,0,0.5)';
+                        
+                        // Store RGB values on the element
+                        box.dataset.r = r;
+                        box.dataset.g = g;
+                        box.dataset.b = b;
+                    }
+                });
+            }
+            
+            // Update color values
+            function updateColorValues(r, g, b) {
+                const hex = rgbToHex(r, g, b);
+                const hsl = rgbToHsl(r, g, b);
+                
+                hexInput.value = hex;
+                rgbInput.value = `rgb(${r}, ${g}, ${b})`;
+                hslInput.value = `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
+                colorPreview.style.backgroundColor = hex;
+            }
+            
+            // Handle wheel click
+            canvas.addEventListener('click', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const color = getColorFromWheel(x, y);
+                if (color) {
+                    updateBaseColor(color.rgb[0], color.rgb[1], color.rgb[2]);
+                }
+            });
+            
+            // Handle scheme selection
+            schemeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    schemeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedScheme = this.dataset.scheme;
+                    updateColorScheme();
+                    drawTheoryLines();
+                });
+            });
+            
+            // Handle palette color click
+            colorPalette.addEventListener('click', function(e) {
+                const colorBox = e.target.closest('.color-box');
+                if (colorBox) {
+                    const r = parseInt(colorBox.dataset.r);
+                    const g = parseInt(colorBox.dataset.g);
+                    const b = parseInt(colorBox.dataset.b);
+                    updateBaseColor(r, g, b);
+                }
+            });
+            
+            // Handle HEX input change
+            hexInput.addEventListener('change', function() {
+                const hex = this.value;
+                if (/^#?([0-9A-F]{3}){1,2}$/i.test(hex)) {
+                    const rgb = hexToRgb(hex);
+                    updateBaseColor(rgb.r, rgb.g, rgb.b);
+                } else {
+                    this.value = rgbToHex(baseColor.r, baseColor.g, baseColor.b);
+                }
+            });
+            
+            // Handle RGB input change
+            rgbInput.addEventListener('change', function() {
+                const rgb = parseRgb(this.value);
+                if (rgb) {
+                    updateBaseColor(rgb.r, rgb.g, rgb.b);
+                } else {
+                    this.value = `rgb(${baseColor.r}, ${baseColor.g}, ${baseColor.b})`;
+                }
+            });
+            
+            // Handle HSL input change
+            hslInput.addEventListener('change', function() {
+                const hsl = parseHsl(this.value);
+                if (hsl) {
+                    const [r, g, b] = hslToRgb(hsl.h, hsl.s, hsl.l);
+                    updateBaseColor(r, g, b);
+                } else {
+                    const hsl = rgbToHsl(baseColor.r, baseColor.g, baseColor.b);
+                    this.value = `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
+                }
+            });
+            
+            // Handle color preview click (copy to clipboard)
+            colorPreview.addEventListener('click', function() {
+                const hex = rgbToHex(baseColor.r, baseColor.g, baseColor.b);
+                navigator.clipboard.writeText(hex).then(() => {
+                    const originalColor = this.style.backgroundColor;
+                    this.style.backgroundColor = '#4CAF50';
+                    setTimeout(() => {
+                        this.style.backgroundColor = originalColor;
+                    }, 300);
+                });
+            });
+            
+            // Initialize
+            drawColorWheel();
+            updateBaseColor(baseColor.r, baseColor.g, baseColor.b);
+        });
+    </script>
+</body>
+</html>

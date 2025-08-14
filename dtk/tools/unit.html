@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit Converter | Designer's Toolkit</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+  <style>
+    /* Additional Styles for Unit Converter */
+    .unit-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .unit-card {
+      flex: 1;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+    .unit-card:hover {
+      background: #e9ecef;
+    }
+    .unit-card.active {
+      background: #007B83;
+      color: white;
+    }
+    .converter-section {
+      display: none;
+    }
+    .converter-section.active {
+      display: block;
+    }
+    .conversion-result {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f0f8ff;
+      border-radius: 8px;
+      text-align: center;
+      border-left: 4px solid #007B83;
+    }
+    .conversion-formula {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #007B83;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Unit Converter</h1>
+    <p>Convert between length, volume, and weight units</p>
+  </header>
+
+  <div class="tool-container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+
+    <div class="unit-group">
+      <div class="unit-card active" data-type="length">Length</div>
+      <div class="unit-card" data-type="volume">Volume</div>
+      <div class="unit-card" data-type="weight">Weight</div>
+    </div>
+
+    <!-- Length Converter -->
+    <div id="length-converter" class="converter-section active">
+      <div class="row">
+        <div>
+          <label for="length-value">Value:</label>
+          <input type="number" id="length-value" placeholder="Enter value" step="any">
+        </div>
+        <div>
+          <label for="length-from">From:</label>
+          <select id="length-from">
+            <option value="mm">Millimeters (mm)</option>
+            <option value="cm">Centimeters (cm)</option>
+            <option value="m">Meters (m)</option>
+            <option value="inch">Inches (in)</option>
+            <option value="ft">Feet (ft)</option>
+          </select>
+        </div>
+        <div>
+          <label for="length-to">To:</label>
+          <select id="length-to">
+            <option value="cm">Centimeters (cm)</option>
+            <option value="mm">Millimeters (mm)</option>
+            <option value="m">Meters (m)</option>
+            <option value="inch">Inches (in)</option>
+            <option value="ft">Feet (ft)</option>
+          </select>
+        </div>
+      </div>
+      <div class="conversion-result" id="length-result"></div>
+      <div class="conversion-formula">
+        <strong>Length Conversion Formulas:</strong><br>
+        1 inch = 2.54 cm | 1 cm = 10 mm | 1 foot = 12 inches | 1 meter = 100 cm
+      </div>
+    </div>
+
+    <!-- Volume Converter -->
+    <div id="volume-converter" class="converter-section">
+      <div class="row">
+        <div>
+          <label for="volume-value">Value:</label>
+          <input type="number" id="volume-value" placeholder="Enter value" step="any">
+        </div>
+        <div>
+          <label for="volume-from">From:</label>
+          <select id="volume-from">
+            <option value="ml">Milliliters (ml)</option>
+            <option value="l">Liters (l)</option>
+            <option value="floz">Fluid Ounces (fl oz)</option>
+            <option value="cup">Cups</option>
+            <option value="pt">Pints (pt)</option>
+          </select>
+        </div>
+        <div>
+          <label for="volume-to">To:</label>
+          <select id="volume-to">
+            <option value="ml">Milliliters (ml)</option>
+            <option value="l">Liters (l)</option>
+            <option value="floz">Fluid Ounces (fl oz)</option>
+            <option value="cup">Cups</option>
+            <option value="pt">Pints (pt)</option>
+          </select>
+        </div>
+      </div>
+      <div class="conversion-result" id="volume-result"></div>
+      <div class="conversion-formula">
+        <strong>Volume Conversion Formulas:</strong><br>
+        1 liter = 1000 ml | 1 cup = 240 ml | 1 fluid ounce = 29.5735 ml | 1 pint = 473.176 ml
+      </div>
+    </div>
+
+    <!-- Weight Converter -->
+    <div id="weight-converter" class="converter-section">
+      <div class="row">
+        <div>
+          <label for="weight-value">Value:</label>
+          <input type="number" id="weight-value" placeholder="Enter value" step="any">
+        </div>
+        <div>
+          <label for="weight-from">From:</label>
+          <select id="weight-from">
+            <option value="g">Grams (g)</option>
+            <option value="kg">Kilograms (kg)</option>
+            <option value="oz">Ounces (oz)</option>
+            <option value="lb">Pounds (lb)</option>
+          </select>
+        </div>
+        <div>
+          <label for="weight-to">To:</label>
+          <select id="weight-to">
+            <option value="g">Grams (g)</option>
+            <option value="kg">Kilograms (kg)</option>
+            <option value="oz">Ounces (oz)</option>
+            <option value="lb">Pounds (lb)</option>
+          </select>
+        </div>
+      </div>
+      <div class="conversion-result" id="weight-result"></div>
+      <div class="conversion-formula">
+        <strong>Weight Conversion Formulas:</strong><br>
+        1 kg = 1000 g | 1 ounce = 28.3495 g | 1 pound = 453.592 g | 1 pound = 16 ounces
+      </div>
+    </div>
+  </div>
+
+<footer>
+	© 2025 TC-Myaing | Design by Tin Naing Oo.
+  </footer>
+
+  <script>
+    // Tab Switching
+    document.querySelectorAll('.unit-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.unit-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        
+        document.querySelectorAll('.converter-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        document.getElementById(`${card.dataset.type}-converter`).classList.add('active');
+      });
+    });
+
+    // Auto-calculate when input changes
+    function setupAutoCalculate() {
+      // Length Converter
+      const lengthInput = document.getElementById('length-value');
+      const lengthFrom = document.getElementById('length-from');
+      const lengthTo = document.getElementById('length-to');
+      
+      [lengthInput, lengthFrom, lengthTo].forEach(el => {
+        el.addEventListener('input', convertLength);
+      });
+
+      // Volume Converter
+      const volumeInput = document.getElementById('volume-value');
+      const volumeFrom = document.getElementById('volume-from');
+      const volumeTo = document.getElementById('volume-to');
+      
+      [volumeInput, volumeFrom, volumeTo].forEach(el => {
+        el.addEventListener('input', convertVolume);
+      });
+
+      // Weight Converter
+      const weightInput = document.getElementById('weight-value');
+      const weightFrom = document.getElementById('weight-from');
+      const weightTo = document.getElementById('weight-to');
+      
+      [weightInput, weightFrom, weightTo].forEach(el => {
+        el.addEventListener('input', convertWeight);
+      });
+    }
+
+    // Length Conversion Function
+    function convertLength() {
+      const value = parseFloat(document.getElementById('length-value').value);
+      const fromUnit = document.getElementById('length-from').value;
+      const toUnit = document.getElementById('length-to').value;
+      
+      if (isNaN(value)) {
+        document.getElementById('length-result').innerHTML = '';
+        return;
+      }
+
+      // Convert all to millimeters first (base unit)
+      const toMillimeters = {
+        mm: value * 1,
+        cm: value * 10,
+        m: value * 1000,
+        inch: value * 25.4,
+        ft: value * 304.8
+      };
+
+      // Then convert to target unit
+      const fromMillimeters = {
+        mm: 1,
+        cm: 0.1,
+        m: 0.001,
+        inch: 1/25.4,
+        ft: 1/304.8
+      };
+
+      const result = toMillimeters[fromUnit] * fromMillimeters[toUnit];
+      document.getElementById('length-result').innerHTML = 
+        `${value} ${fromUnit} = <strong>${result.toFixed(6)} ${toUnit}</strong>`;
+    }
+
+    // Volume Conversion Function
+    function convertVolume() {
+      const value = parseFloat(document.getElementById('volume-value').value);
+      const fromUnit = document.getElementById('volume-from').value;
+      const toUnit = document.getElementById('volume-to').value;
+      
+      if (isNaN(value)) {
+        document.getElementById('volume-result').innerHTML = '';
+        return;
+      }
+
+      // Convert all to milliliters first (base unit)
+      const toMilliliters = {
+        ml: value * 1,
+        l: value * 1000,
+        floz: value * 29.5735,
+        cup: value * 240,
+        pt: value * 473.176
+      };
+
+      // Then convert to target unit
+      const fromMilliliters = {
+        ml: 1,
+        l: 0.001,
+        floz: 1/29.5735,
+        cup: 1/240,
+        pt: 1/473.176
+      };
+
+      const result = toMilliliters[fromUnit] * fromMilliliters[toUnit];
+      document.getElementById('volume-result').innerHTML = 
+        `${value} ${fromUnit} = <strong>${result.toFixed(6)} ${toUnit}</strong>`;
+    }
+
+    // Weight Conversion Function
+    function convertWeight() {
+      const value = parseFloat(document.getElementById('weight-value').value);
+      const fromUnit = document.getElementById('weight-from').value;
+      const toUnit = document.getElementById('weight-to').value;
+      
+      if (isNaN(value)) {
+        document.getElementById('weight-result').innerHTML = '';
+        return;
+      }
+
+      // Convert all to grams first (base unit)
+      const toGrams = {
+        g: value * 1,
+        kg: value * 1000,
+        oz: value * 28.3495,
+        lb: value * 453.592
+      };
+
+      // Then convert to target unit
+      const fromGrams = {
+        g: 1,
+        kg: 0.001,
+        oz: 1/28.3495,
+        lb: 1/453.592
+      };
+
+      const result = toGrams[fromUnit] * fromGrams[toUnit];
+      document.getElementById('weight-result').innerHTML = 
+        `${value} ${fromUnit} = <strong>${result.toFixed(6)} ${toUnit}</strong>`;
+    }
+
+    // Initialize auto-calculation
+    setupAutoCalculate();
+  </script>
+</body>
+</html>

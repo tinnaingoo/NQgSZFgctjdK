@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Ratio C Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, button {
+      font-size: 1em;
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+    }
+    .result {
+      margin-top: 20px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-top: 30px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Golden Ratio - C Calculator</h1>
+
+  <label for="aValue">Enter A:</label>
+  <input type="number" id="aValue" step="any" placeholder="Enter A">
+
+  <label for="bValue">Enter B:</label>
+  <input type="number" id="bValue" step="any" placeholder="Enter B">
+
+  <button onclick="calculateC()">Calculate C</button>
+
+  <div class="result" id="resultBox" style="display:none;">
+    <h2>Result:</h2>
+    <p id="cValue"></p>
+    <p id="cPower"></p>
+    <p id="relation"></p>
+  </div>
+
+  <script>
+    function calculateC() {
+      const A = parseFloat(document.getElementById('aValue').value);
+      const B = parseFloat(document.getElementById('bValue').value);
+      const goldenRatio = 1.618;
+
+      if (isNaN(A) || isNaN(B) || A <= 0 || B <= 0) {
+        alert("Please enter valid numbers for A and B (both > 0)");
+        return;
+      }
+
+      let C, relation;
+      if (B > A) {
+        C = B / A;
+        relation = "B > A ⇒ C = B / A";
+      } else {
+        C = A / B;
+        relation = "A > B ⇒ C = A / B";
+      }
+
+      const n = Math.log(C) / Math.log(goldenRatio);
+
+      document.getElementById('cValue').innerText = `C = ${C.toFixed(4)}`;
+      document.getElementById('cPower').innerText = `C ≈ 1.618^${n.toFixed(4)}`;
+      document.getElementById('relation').innerText = relation;
+      document.getElementById('resultBox').style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

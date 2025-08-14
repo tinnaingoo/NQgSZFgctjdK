@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Wheel | Designer's Toolkit</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/color-wheel.css">
+</head>
+<body>
+  <header>
+    <h1>Color Wheel</h1>
+    <p>Create and explore color schemes</p>
+  </header>
+
+  <div class="tool-container">
+    <a href="../index.html" class="back-btn">← Back to Home</a>
+    
+    <div class="color-wheel-wrapper">
+      <div class="color-wheel-container">
+        <canvas id="color-wheel" width="400" height="400"></canvas>
+        <div class="theory-indicator" id="theory-indicator">Analogous</div>
+        <div class="color-marker" id="color-marker"></div>
+      </div>
+
+      <div class="color-picker">
+        <div class="color-scheme-selector">
+          <button class="active" data-scheme="analogous">Analogous</button>
+          <button data-scheme="monochromatic">Monochromatic</button>
+          <button data-scheme="triad">Triad</button>
+          <button data-scheme="complementary">Complementary</button>
+          <button data-scheme="split-complementary">Split Complementary</button>
+          <button data-scheme="square">Square</button>
+          <button data-scheme="compound">Compound</button>
+        </div>
+
+        <div class="color-palette" id="color-palette">
+          <div class="color-box" data-color="1"><div class="color-index">1</div><span class="hex-value">#FF0000</span></div>
+          <div class="color-box" data-color="2"><div class="color-index">2</div><span class="hex-value">#00FF00</span></div>
+          <div class="color-box" data-color="3"><div class="color-index">3</div><span class="hex-value">#0000FF</span></div>
+          <div class="color-box" data-color="4"><div class="color-index">4</div><span class="hex-value">#FFFF00</span></div>
+          <div class="color-box" data-color="5"><div class="color-index">5</div><span class="hex-value">#FF00FF</span></div>
+        </div>
+
+        <div class="color-values">
+          <div class="color-value">
+            <label>HEX:</label>
+            <input type="text" id="hex-value" value="#FF0000">
+            <div class="color-preview" id="color-preview"></div>
+          </div>
+          <div class="color-value">
+            <label>RGB:</label>
+            <input type="text" id="rgb-value" value="rgb(255, 0, 0)">
+          </div>
+          <div class="color-value">
+            <label>HSL:</label>
+            <input type="text" id="hsl-value" value="hsl(0, 100%, 50%)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h3>How to use:</h3>
+      <ul>
+        <li>Click on the color wheel to select a base color</li>
+        <li>Choose a color harmony rule from the buttons</li>
+        <li>Edit HEX, RGB, or HSL values directly to change the base color</li>
+        <li>Click on any color in the palette to make it the base color</li>
+        <li>Click the preview box to copy the current color</li>
+        <li>Color theory indicators show on the wheel for visual reference</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 TC-Myaing | Design by Tin Naing Oo.
+  </footer>
+
+  <script src="../assets/color-wheel.js"></script>
+</body>
+</html>
