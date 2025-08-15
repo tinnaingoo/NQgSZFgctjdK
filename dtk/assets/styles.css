@@ -393,3 +393,29 @@ footer {
       color: #666;
       margin-top: 5px;
     }
+
+/*====visit btn===*/
+.visit-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007BFF;  /* primary blue */
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  margin-top: 15px;
+}
+
+.visit-btn:hover {
+  background-color: #0056b3; /* darker blue */
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.visit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 6px rgba(0, 123, 255, 0.2);
+}
