@@ -16,6 +16,11 @@ const predefinedCategories = ['Computer', 'AI', 'Technology Sharing'];
 
 // DOM Content Loaded Event
 document.addEventListener('DOMContentLoaded', () => {
+
+    setupEditPostDialog();
+    setupPostDataEditorTab(); // <<<<<<<< ဒီလိုင်းကို အသစ်ထည့်ပါ
+    updateDashboard();
+    
     if (localStorage.getItem('isAuthenticated') !== 'true') {
         window.location.href = '/admin/login.html';
         return;
@@ -152,6 +157,7 @@ const setupSidebarNavigation = () => {
             
             if (target === 'dashboard') updateDashboard();
             else if (target === 'all-posts') updateAllPostsPage();
+            else if (target === 'post-data-editor') { populatePostDataEditorDropdown(); clearPostDataEditorForm(); }
             else if (target === 'create-post') switchTab('form');
             else if (target === 'categories') updateCategoriesTab();
             else if (target === 'users') updateUsersTab();
@@ -529,6 +535,7 @@ const fetchPostData = async () => {
         const data = await response.json();
         allPosts = data;
         localStorage.setItem('postData', JSON.stringify(data));
+        populatePostDataEditorDropdown();
         return data;
     } catch (error) {
         console.error('Error fetching post data:', error);
@@ -1097,3 +1104,288 @@ const saveSettings = (e) => {
     showAlert('Settings saved successfully!', 'success');
     updateAllPostsPage();
 };
+
+
+/* ======================
+   REUSABLE FORM FUNCTIONS
+   ====================== */
+
+/**
+ * Populates a checkbox container with all available categories.
+ * @param {string} containerId - The ID of the element to hold the checkboxes.
+ * @param {string[]} selectedCategories - An array of categories that should be checked.
+ */
+const populateCategoryCheckboxes = (containerId, selectedCategories = []) => {
+    const categoryContainer = document.getElementById(containerId);
+    if (!categoryContainer) {
+        console.error(`Category container with ID '${containerId}' not found!`);
+        return;
+    }
+    categoryContainer.innerHTML = '';
+
+    const allUniqueCategories = [...new Set([
+        ...predefinedCategories,
+        ...(allPosts.flatMap(p => p.Category || []))
+    ])];
+
+    allUniqueCategories.forEach(cat => {
+        const div = document.createElement('div');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `${containerId}-${cat.toLowerCase().replace(/\s+/g, '-')}`;
+        checkbox.value = cat;
+        checkbox.checked = selectedCategories.includes(cat);
+
+        const label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+        label.textContent = cat;
+
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        categoryContainer.appendChild(div);
+    });
+};
+
+/**
+ * Populates Previous and Next post dropdowns.
+ * @param {string} preSelectId - The ID of the "Previous Post" select element.
+ * @param {string} nextSelectId - The ID of the "Next Post" select element.
+ * @param {string} currentPostUrl - The URL of the post being edited (to exclude it from the list).
+ * @param {string} selectedPreUrl - The URL of the currently selected previous post.
+ * @param {string} selectedNextUrl - The URL of the currently selected next post.
+ */
+const populatePrevNextDropdowns = (preSelectId, nextSelectId, currentPostUrl = '', selectedPreUrl = '', selectedNextUrl = '') => {
+    const prePostSelect = document.getElementById(preSelectId);
+    const nextPostSelect = document.getElementById(nextSelectId);
+
+    if (!prePostSelect || !nextPostSelect) {
+        console.error('Previous/Next post dropdowns not found!');
+        return;
+    }
+
+    prePostSelect.innerHTML = '<option value="">None</option>';
+    nextPostSelect.innerHTML = '<option value="">None</option>';
+
+    allPosts.forEach(p => {
+        if (p.PostUrl !== currentPostUrl) {
+            const optionText = p.title || `Untitled Post (${p.PostUrl})`;
+
+            const preOption = document.createElement('option');
+            preOption.value = p.PostUrl;
+            preOption.textContent = optionText;
+            if (normalizeUrl(p.PostUrl) === normalizeUrl(selectedPreUrl)) {
+                preOption.selected = true;
+            }
+            prePostSelect.appendChild(preOption);
+
+            const nextOption = document.createElement('option');
+            nextOption.value = p.PostUrl;
+            nextOption.textContent = optionText;
+            if (normalizeUrl(p.PostUrl) === normalizeUrl(selectedNextUrl)) {
+                nextOption.selected = true;
+            }
+            nextPostSelect.appendChild(nextOption);
+        }
+    });
+};
+
+/* ======================
+   POST DATA EDITOR FUNCTIONALITY
+   ====================== */
+
+/**
+ * Sets up event listeners for the Post Data Editor tab.
+ */
+const setupPostDataEditorTab = () => {
+    document.getElementById('pde-post-select').addEventListener('change', loadPostForEditor);
+    document.getElementById('pde-save-btn').addEventListener('click', savePostFromEditor);
+    document.getElementById('pde-clear-btn').addEventListener('click', clearPostDataEditorForm);
+};
+
+/**
+ * Populates the dropdown in the Post Data Editor tab with all posts.
+ */
+const populatePostDataEditorDropdown = () => {
+    const select = document.getElementById('pde-post-select');
+    const currentValue = select.value; // Remember the current selection
+    select.innerHTML = '<option value="">--- Create New Post ---</option>';
+
+    allPosts.forEach(post => {
+        const option = document.createElement('option');
+        option.value = post.PostUrl;
+        option.textContent = post.title || `Untitled (${post.PostUrl})`;
+        select.appendChild(option);
+    });
+
+    // Restore selection if it still exists
+    if (allPosts.some(p => p.PostUrl === currentValue)) {
+        select.value = currentValue;
+    }
+};
+
+/**
+ * Clears all fields in the Post Data Editor form.
+ */
+const clearPostDataEditorForm = () => {
+    document.getElementById('post-data-editor-form').reset();
+    document.getElementById('pde-post-select').value = '';
+
+    // Set default author and current date
+    document.getElementById('pde-post-author').value = 'tinnaingoo';
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('pde-post-date').value = today;
+
+    // Clear and repopulate categories (with nothing selected)
+    populateCategoryCheckboxes('pde-post-category', []);
+
+    // Clear and repopulate prev/next posts
+    populatePrevNextDropdowns('pde-pre-post', 'pde-next-post');
+};
+
+/**
+ * Loads the data of the selected post into the editor form.
+ */
+const loadPostForEditor = () => {
+    const select = document.getElementById('pde-post-select');
+    const postUrl = select.value;
+
+    if (!postUrl) {
+        clearPostDataEditorForm();
+        return;
+    }
+
+    const post = allPosts.find(p => p.PostUrl === postUrl);
+    if (!post) {
+        showAlert('Selected post not found!', 'danger');
+        clearPostDataEditorForm();
+        return;
+    }
+
+    // Format date for input[type="date"]
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return new Date().toISOString().split('T')[0];
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return new Date().toISOString().split('T')[0];
+        return date.toISOString().split('T')[0];
+    };
+
+    // Populate fields
+    document.getElementById('pde-post-title').value = post.title || '';
+    document.getElementById('pde-post-description').value = post.Description || '';
+    document.getElementById('pde-post-image').value = post.ImageUrl || '';
+    document.getElementById('pde-post-image-caption').value = post.ImageCaption || '';
+    document.getElementById('pde-post-author').value = post.Author || 'tinnaingoo';
+    document.getElementById('pde-post-date').value = formatDateForInput(post.Date);
+    document.getElementById('pde-post-url').value = post.PostUrl || '';
+
+    // Populate categories
+    populateCategoryCheckboxes('pde-post-category', post.Category || []);
+
+    // Populate Previous/Next Post dropdowns
+    populatePrevNextDropdowns(
+        'pde-pre-post',
+        'pde-next-post',
+        post.PostUrl,
+        post['PrePost-Url'],
+        post['NextPost-Url']
+    );
+};
+
+/**
+ * Saves the data from the editor form (creates new or updates existing).
+ */
+const savePostFromEditor = async () => {
+    const selectedPostUrl = document.getElementById('pde-post-select').value;
+    const isUpdating = !!selectedPostUrl;
+
+    // Read all values from the form
+    const title = document.getElementById('pde-post-title').value.trim();
+    const description = document.getElementById('pde-post-description').value.trim();
+    const imageUrl = document.getElementById('pde-post-image').value.trim();
+    const imageCaption = document.getElementById('pde-post-image-caption').value.trim();
+    const author = document.getElementById('pde-post-author').value.trim();
+    const date = document.getElementById('pde-post-date').value;
+    const postUrl = document.getElementById('pde-post-url').value.trim();
+    const prePostUrl = document.getElementById('pde-pre-post').value;
+    const nextPostUrl = document.getElementById('pde-next-post').value;
+
+    const categoryCheckboxes = document.querySelectorAll('#pde-post-category input[type="checkbox"]:checked');
+    const categories = Array.from(categoryCheckboxes).map(cb => cb.value);
+
+    // --- Validation ---
+    if (!title || !description || !imageUrl || !imageCaption || !author || !date || !postUrl) {
+        showAlert('ကျေးဇူးပြု၍ အကွက်အားလုံးကို ဖြည့်ပါ', 'danger');
+        return;
+    }
+    if (!validateUrl(imageUrl)) {
+        showAlert('ကျေးဇူးပြု၍ မှန်ကန်သော ပုံလိပ်စာထည့်ပါ', 'danger');
+        return;
+    }
+    if (!postUrl.startsWith('/')) {
+         showAlert('Post URL must start with a "/" (e.g., /home/...)', 'danger');
+        return;
+    }
+
+    // Check for duplicate PostUrl
+    const postUrlExists = allPosts.some(p => p.PostUrl === postUrl);
+    if (postUrlExists && (!isUpdating || selectedPostUrl !== postUrl)) {
+        showAlert('ဤပို့စ်လိပ်စာရှိပြီးဖြစ်သည်။ ကျေးဇူးပြု၍ အခြားတစ်ခုရွေးပါ။', 'danger');
+        return;
+    }
+
+    // --- Prepare Post Object ---
+    const prePostSelect = document.getElementById('pde-pre-post');
+    const nextPostSelect = document.getElementById('pde-next-post');
+    const prePostTitle = prePostUrl ? prePostSelect.options[prePostSelect.selectedIndex].text : '';
+    const nextPostTitle = nextPostUrl ? nextPostSelect.options[nextPostSelect.selectedIndex].text : '';
+
+    const postData = {
+        Category: categories,
+        title,
+        Description: description,
+        ImageUrl: imageUrl,
+        ImageCaption: imageCaption,
+        Author: author,
+        Date: formatDate(date), // Format date to "Month DD, YYYY"
+        PostUrl: postUrl,
+        'PrePost-Url': prePostUrl || null,
+        'PrePost-Title': prePostTitle || null,
+        'NextPost-Url': nextPostUrl || null,
+        'NextPost-Title': nextPostTitle || null
+    };
+
+    // --- Save Data ---
+    if (isUpdating) {
+        // Update existing post
+        const postIndex = allPosts.findIndex(p => p.PostUrl === selectedPostUrl);
+        if (postIndex === -1) {
+            showAlert('Update လုပ်မည့် ပို့စ်ကို ရှာမတွေ့ပါ!', 'danger');
+            return;
+        }
+        allPosts[postIndex] = postData;
+    } else {
+        // Create new post
+        allPosts.push(postData);
+    }
+
+    localStorage.setItem('postData', JSON.stringify(allPosts));
+
+    // Update other posts if they link to this one
+    updateRelatedPosts(postData); 
+
+    // --- Show Success ---
+    const message = isUpdating ? 'ပို့စ်ကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ!' : 'ပို့စ်အသစ်ကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!';
+    showAlert(message, 'success');
+
+    // --- Update UI ---
+    updateAllPostsPage(); // Refresh "All Posts" tab
+    populatePostDataEditorDropdown(); // Refresh dropdown
+
+    // If updating, keep the form loaded. If creating, clear it.
+    if (isUpdating) {
+         document.getElementById('pde-post-select').value = postUrl;
+    } else {
+        clearPostDataEditorForm();
+    }
+};
+
