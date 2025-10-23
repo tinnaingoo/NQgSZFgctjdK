@@ -3,6 +3,23 @@
     "Category": [
         "Computer"
     ],
+    "title": "Windows Quick Tools - အလွယ်တကူ အသုံးပြုနိုင်တဲ့ Tool တစ်ခု",
+    "Description": "Settings တွေထဲ ဘယ်လိုဝင်ရမလဲ၊ ဘယ်နေရာမှာ နှိပ်ရမလဲဆိုတာ မသိကြတာမျိုးတွေ မကြာခဏဆိုသလို ကြုံရပါတယ်။ ဒီလိုအခက်အခဲတွေကို ဖြေရှင်းနိုင်ဖို့အတွက် ကျွန်တော့်ကိုယ်ပိုင်သုံးဖို့နဲ့ အခြားသူငယ်ချင်းတွေကိုလည်း အလွယ်တကူ ကူညီပေးနိုင်ဖို့ ဒီ Windows Quick Tools လေးကို ....",
+    "ImageUrl": "https://i.pinimg.com/736x/20/f2/64/20f26477f8a3bb3e13d434d378ff994d.jpg",
+    "ImageCaption": "Windows Quick Toolsx",
+    "Author": "tinnaingoo",
+    "Date": "October 23, 2025",
+    "PostUrl": "/home/computer/windows-quick-tools",
+    "PrePost-Url": "/home/computer/f1-disable-help",
+    "PrePost-Title": "Windows မှာ Help Box အမြဲပေါ်နေသူများအတွက် F1 Help Disable Help file",
+    "NextPost-Url": "/home/computer/what-is-computer",
+    "NextPost-Title": "Computer ဆိုတာဘာလဲ"
+},
+
+{
+    "Category": [
+        "Computer"
+    ],
     "title": "MMNLP Unicode Converter",
     "Description": "MMNLP Converter သည် Zawgyi/Classic Myanmar font များနှင့် အခြားမြန်မာ font မျိုးစုံ (ဥပမာ — Academy, Amyanmar, Ava-Forever, Ayar-Family, CE-Family, I, M-Myanmar-Family, Myanmar1, Myazedi, Pinny-Family, Win-Family, Zawgyi) တွင် ရေးထားသော စာအရွက်များကိုလက်မောင်းတစ်ချက်နဲ့ Unicode သို့ ပြောင်းပေးနိုင်သော Windows application တစ်ခု ဖြစ်ပါတယ်။",
     "ImageUrl": "https://i.pinimg.com/736x/a7/c6/d8/a7c6d80af1d31abb3d0fb3242f2875f3.jpg",
