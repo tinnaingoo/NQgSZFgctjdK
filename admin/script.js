@@ -1297,7 +1297,7 @@ const loadPostForEditor = () => {
 const savePostFromEditor = async () => {
     const selectedPostUrl = document.getElementById('pde-post-select').value;
     const isUpdating = !!selectedPostUrl;
-
+    
     // Read all values from the form
     const title = document.getElementById('pde-post-title').value.trim();
     const description = document.getElementById('pde-post-description').value.trim();
@@ -1308,11 +1308,12 @@ const savePostFromEditor = async () => {
     const postUrl = document.getElementById('pde-post-url').value.trim();
     const prePostUrl = document.getElementById('pde-pre-post').value;
     const nextPostUrl = document.getElementById('pde-next-post').value;
-
+    
     const categoryCheckboxes = document.querySelectorAll('#pde-post-category input[type="checkbox"]:checked');
     const categories = Array.from(categoryCheckboxes).map(cb => cb.value);
-
+    
     // --- Validation ---
+    // "တစ်ခုခုဖြည့်ဖို့လိုအပ်ရင် သတိပေး Message ပြမယ်။"
     if (!title || !description || !imageUrl || !imageCaption || !author || !date || !postUrl) {
         showAlert('ကျေးဇူးပြု၍ အကွက်အားလုံးကို ဖြည့်ပါ', 'danger');
         return;
@@ -1325,20 +1326,21 @@ const savePostFromEditor = async () => {
          showAlert('Post URL must start with a "/" (e.g., /home/...)', 'danger');
         return;
     }
-
+    
     // Check for duplicate PostUrl
     const postUrlExists = allPosts.some(p => p.PostUrl === postUrl);
     if (postUrlExists && (!isUpdating || selectedPostUrl !== postUrl)) {
         showAlert('ဤပို့စ်လိပ်စာရှိပြီးဖြစ်သည်။ ကျေးဇူးပြု၍ အခြားတစ်ခုရွေးပါ။', 'danger');
         return;
     }
-
+    
     // --- Prepare Post Object ---
+    // (This matches the user's requested JSON format)
     const prePostSelect = document.getElementById('pde-pre-post');
     const nextPostSelect = document.getElementById('pde-next-post');
     const prePostTitle = prePostUrl ? prePostSelect.options[prePostSelect.selectedIndex].text : '';
     const nextPostTitle = nextPostUrl ? nextPostSelect.options[nextPostSelect.selectedIndex].text : '';
-
+    
     const postData = {
         Category: categories,
         title,
@@ -1353,8 +1355,8 @@ const savePostFromEditor = async () => {
         'NextPost-Url': nextPostUrl || null,
         'NextPost-Title': nextPostTitle || null
     };
-
-    // --- Save Data ---
+    
+    // --- Save Data (to localStorage) ---
     if (isUpdating) {
         // Update existing post
         const postIndex = allPosts.findIndex(p => p.PostUrl === selectedPostUrl);
@@ -1367,20 +1369,34 @@ const savePostFromEditor = async () => {
         // Create new post
         allPosts.push(postData);
     }
-
+    
     localStorage.setItem('postData', JSON.stringify(allPosts));
-
+    
     // Update other posts if they link to this one
     updateRelatedPosts(postData); 
-
-    // --- Show Success ---
-    const message = isUpdating ? 'ပို့စ်ကို အောင်မြင်စွာ ပြင်ဆင်ပြီးပါပြီ!' : 'ပို့စ်အသစ်ကို အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!';
-    showAlert(message, 'success');
-
+    
+    // --- Copy to Clipboard (User's new request) ---
+    // "အခုလို ထည့်သွင်းလိုက်တဲ့ Data အလိုက် Copy လုပ်သွားစေချင်တယ်။"
+    const postDataString = JSON.stringify(postData, null, 4) + ',';
+    
+    try {
+        await navigator.clipboard.writeText(postDataString);
+        
+        // "အောင်မြင်ရင် အောင်မြင်တဲ့ Message ပြမယ်။"
+        const message = isUpdating 
+            ? 'ပို့စ်ကို အောင်မြင်စွာ ပြင်ဆင်ပြီး clipboard သို့ ကူးယူပြီးပါပြီ!' 
+            : 'ပို့စ်အသစ်ကို အောင်မြင်စွာ ဖန်တီးပြီး clipboard သို့ ကူးယူပြီးပါပြီ!';
+        showAlert(message, 'success');
+        
+    } catch (err) {
+        // Handle clipboard failure but still acknowledge the save
+        showAlert('ပို့စ်ကို Save လုပ်ပြီးပါပြီ။ သို့သော် clipboard သို့ ကူးယူရာတွင် အမှားဖြစ်ခဲ့သည်: ' + err.message, 'danger');
+    }
+    
     // --- Update UI ---
     updateAllPostsPage(); // Refresh "All Posts" tab
     populatePostDataEditorDropdown(); // Refresh dropdown
-
+    
     // If updating, keep the form loaded. If creating, clear it.
     if (isUpdating) {
          document.getElementById('pde-post-select').value = postUrl;
@@ -1388,4 +1404,3 @@ const savePostFromEditor = async () => {
         clearPostDataEditorForm();
     }
 };
-
