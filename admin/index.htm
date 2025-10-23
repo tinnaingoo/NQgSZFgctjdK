@@ -136,6 +136,81 @@
                 </div>
             </div>
 
+            
+            <div id="post-data-editor-tab" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">Post Data Editor</h2>
+                <form id="post-data-editor-form">
+                    <div class="form-group">
+                        <label for="pde-post-select">Select Post to Edit or Create New</label>
+                        <select id="pde-post-select">
+                            <option value="">--- Create New Post ---</option>
+                            </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-post-title">Post Title</label>
+                        <input type="text" id="pde-post-title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Categories</label>
+                        <div id="pde-post-category" class="checkbox-group">
+                            </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-post-description">Description</label>
+                        <textarea id="pde-post-description" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-post-image">Image URL</label>
+                        <input type="url" id="pde-post-image" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-post-image-caption">Image Caption</label>
+                        <input type="text" id="pde-post-image-caption" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-post-author">Author</label>
+                        <input type="text" id="pde-post-author" value="tinnaingoo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-post-date">Date</label>
+                        <input type="date" id="pde-post-date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-post-url">Post URL (e.g., /home/computer/new-post)</label>
+                        <input type="text" id="pde-post-url" placeholder="/home/category/post-title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-pre-post">Previous Post</label>
+                        <select id="pde-pre-post">
+                            <option value="">None</option>
+                            </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pde-next-post">Next Post</label>
+                        <select id="pde-next-post">
+                            <option value="">None</option>
+                            </select>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" id="pde-save-btn" class="btn btn-primary">Save Post Data</button>
+                        <button type="button" id="pde-clear-btn" class="btn btn-secondary">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
             <!-- All Posts Tab -->
             <div id="all-posts-tab" class="tab-content">
                 <div class="card">
